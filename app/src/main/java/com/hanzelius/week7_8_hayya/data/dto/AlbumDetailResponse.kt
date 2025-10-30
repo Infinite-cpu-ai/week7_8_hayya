@@ -1,5 +1,5 @@
 package com.hanzelius.week7_8_hayya.data.dto
 
-data class albumDetail(
+data class AlbumDetailResponse(
     val album: List<AlbumX>
 )

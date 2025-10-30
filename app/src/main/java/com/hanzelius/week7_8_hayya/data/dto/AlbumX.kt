@@ -18,7 +18,7 @@ data class AlbumX(
     val strAlbumCDart: String,
     val strAlbumSpine: String,
     val strAlbumStripped: String,
-    val strAlbumThumb: String,
+    val strAlbumThumb: String, // image of album cover
     val strAlbumThumbHQ: Any,
     val strAllMusicID: String,
     val strAmazonID: Any,
