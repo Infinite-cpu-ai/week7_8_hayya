@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hanzelius.week7_8_hayya.R
 import com.hanzelius.week7_8_hayya.ui.model.Album
 
 @Composable
@@ -22,7 +24,8 @@ fun AlbumCard(
     Card(
         modifier = modifier
             .height(200.dp)
-            .width(200.dp)
+            .width(200.dp),
+        shape = RoundedCornerShape(15.dp)
     ) {
         Column(
             modifier = modifier.fillMaxSize()
@@ -36,5 +39,5 @@ fun AlbumCard(
 @Preview
 @Composable
 fun AlbumCardPreview() {
-    AlbumCard()
+    AlbumCard(R.drawable.ic_launcher_background, "Sob Rock", 2021, "Rock")
 }
