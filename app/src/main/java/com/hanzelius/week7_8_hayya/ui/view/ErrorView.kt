@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +18,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ErrorView(
     modifier: Modifier = Modifier,
-    errorMessage: String = "Tidak ada koneksi internet."
+    errorMessage: String = "Tidak ada koneksi internet.",
+    onRetry: () -> Unit = {}
 ) {
     Column (
         modifier = modifier
@@ -37,13 +39,24 @@ fun ErrorView(
             color = Color.Red,
             fontSize = 14.sp
         )
+        if (onRetry != null){
+            Button(
+                onClick = onRetry,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFA6A07A),
+                    contentColor = Color.Black
+                )
+            ) {
+                Text(
+                    text = "Coba Lagi",
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
 }
-
 @Preview
 @Composable
-fun ErrorPagePreview() {
-    ErrorView(
-        errorMessage = "Tidak ada koneksi internet."
-    )
+fun ErrorViewPreview() {
+    ErrorView()
 }
