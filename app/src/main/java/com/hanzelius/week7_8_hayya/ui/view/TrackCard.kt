@@ -64,9 +64,10 @@ fun TrackCard(
 
                 Text(
                     text = track.trackName,
-                    color = Color.White,
+                    color = Color(0xFFA6A07A),
                     fontSize = 16.sp,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1
                 )
 
                 Text(

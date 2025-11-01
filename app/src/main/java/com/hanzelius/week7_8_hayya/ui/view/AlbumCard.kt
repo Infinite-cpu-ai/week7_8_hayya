@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -32,37 +33,44 @@ fun AlbumCard(
     Card(
         modifier = modifier
             .clickable(onClick = onClick)
-            .border(width = 0.2.dp, color = Color(0xFFA6A07A), shape = RoundedCornerShape(12.dp)),
+            .border(
+                width = 0.2.dp,
+                color = Color(0xFFA6A07A),
+                shape = RoundedCornerShape(12.dp)
+            ),
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF1E1E1E)
         )
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = modifier.fillMaxWidth()
         ) {
             AsyncImage(
                 model = album.albumThumb,
                 contentDescription = "album thumbnail",
-                modifier = Modifier.height(145.dp)
+                modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(150.dp),
                 contentScale = ContentScale.Crop
             )
-            Column (
-                modifier = modifier.padding(horizontal = 12.dp)
-                    .padding(top = 12.dp)
-            ){
+            Column(
+                modifier = modifier
+                    .padding(horizontal = 15.dp, vertical = 8.dp)
+            ) {
                 Text(
                     text = album.albumName,
                     fontSize = 14.sp,
                     color = Color(0xFFC3BCA8),
-                    maxLines = 1
+                    maxLines = 1,
+                    textAlign = TextAlign.Start
                 )
                 Text(
                     text = "${album.albumYear} • ${album.albumGenre}",
                     fontSize = 12.sp,
-                    color = Color(0xFFC3BCA8)
+                    color = Color(0xFFC3BCA8),
+                    textAlign = TextAlign.Start
                 )
             }
         }

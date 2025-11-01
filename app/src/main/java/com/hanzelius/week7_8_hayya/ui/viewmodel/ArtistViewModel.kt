@@ -43,16 +43,27 @@ class ArtistViewModel(
                 val artistResponse = repository.getArtist(artistName)
                 _artist.value = artistResponse
                 getAlbum(artistName)
-            } catch (e: IOException) {
-                _artist.value = Artist(
-                    isError = true,
-                    errorMessage = "Tidak ada koneksi internet."
-                )
-            } catch (e: HttpException) {
-                _artist.value = Artist(
-                    isError = true,
-                    errorMessage = "Error: ${e.message()}"
-                )
+            } catch (e: Exception) {
+                when (e) {
+                    is IOException -> {
+                        _artist.value = Artist(
+                            isError = true,
+                            errorMessage = "Tidak ada koneksi internet."
+                        )
+                    }
+                    is HttpException -> {
+                        _artist.value = Artist(
+                            isError = true,
+                            errorMessage = "Error: ${e.message()}"
+                        )
+                    }
+                    else -> {
+                        _artist.value = Artist(
+                            isError = true,
+                            errorMessage = e.localizedMessage ?: "Unknown error"
+                        )
+                    }
+                }
             } finally {
                 _isLoading.value = false
             }
@@ -65,10 +76,12 @@ class ArtistViewModel(
             try {
                 val albumResponse: List<Album> = repository.getAlbum(artistName)
                 _album.value = albumResponse
-            } catch (e: IOException) {
-                _album.value = emptyList()
-            } catch (e: HttpException) {
-                _album.value = emptyList()
+            } catch (e: Exception) {
+                // keep album list empty on error, with simple classification
+                _album.value = when (e) {
+                    is IOException, is HttpException -> emptyList()
+                    else -> emptyList()
+                }
             } finally {
                 _isLoading.value = false
             }
@@ -81,14 +94,31 @@ class ArtistViewModel(
             try {
                 val trackResponse: List<Track> = repository.getTrack(albumId)
                 _track.value = trackResponse
-            } catch (e: IOException) {
-                _track.value = listOf(
-                    Track(trackId = 0, trackName = "", trackDuration = 0, isError = true, errorMessage = "Tidak ada koneksi internet.")
-                )
-            } catch (e: HttpException) {
-                _track.value = listOf(
-                    Track(trackId = 0, trackName = "", trackDuration = 0, isError = true, errorMessage = e.message ?: "Gagal memuat lagu.")
-                )
+            } catch (e: Exception) {
+                val errorTrack = when (e) {
+                    is IOException -> Track(
+                        trackId = 0,
+                        trackName = "",
+                        trackDuration = 0,
+                        isError = true,
+                        errorMessage = "Tidak ada koneksi internet."
+                    )
+                    is HttpException -> Track(
+                        trackId = 0,
+                        trackName = "",
+                        trackDuration = 0,
+                        isError = true,
+                        errorMessage = e.message ?: "Gagal memuat lagu."
+                    )
+                    else -> Track(
+                        trackId = 0,
+                        trackName = "",
+                        trackDuration = 0,
+                        isError = true,
+                        errorMessage = e.localizedMessage ?: "Unknown error"
+                    )
+                }
+                _track.value = listOf(errorTrack)
             } finally {
                 _isLoading.value = false
             }

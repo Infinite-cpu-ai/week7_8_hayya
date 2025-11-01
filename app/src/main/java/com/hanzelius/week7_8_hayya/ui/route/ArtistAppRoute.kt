@@ -34,10 +34,17 @@ enum class ArtistScreen(
     Error(title = "Error")
 }
 
+private fun albumRoute(albumId: Int) = "${ArtistScreen.AlbumList.name}/$albumId"
+
 @Composable
 fun ArtistAppRoute() {
     val viewModel: ArtistViewModel = viewModel()
     val navController = rememberNavController()
+
+    val artist by viewModel.artist.collectAsState()
+    val albums by viewModel.album.collectAsState()
+    val tracks by viewModel.track.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -67,18 +74,26 @@ fun ArtistAppRoute() {
 
             composable("${ArtistScreen.AlbumList.name}/{albumId}") { backStackEntry ->
                 val albumId = backStackEntry.arguments?.getString("albumId")?.toIntOrNull()
-                val albums by viewModel.album.collectAsState()
-                val tracks by viewModel.track.collectAsState()
+
+                if (albumId == null) {
+                    ErrorView(errorMessage = "Invalid album id.")
+                    return@composable
+                }
+
                 val selectedAlbum = albums.find { it.albumId == albumId }
 
-                LaunchedEffect (albumId) {
-                    albumId?.let { viewModel.getTrack(it) }
+                LaunchedEffect(albumId) {
+                    viewModel.getTrack(albumId)
                 }
 
                 if (selectedAlbum != null) {
                     AlbumListView(albumDisplayed = selectedAlbum, tracksDisplayed = tracks, viewModel = viewModel)
                 } else {
-                    ErrorView(errorMessage = "Album Not Found.")
+                    if (isLoading) {
+                        LoadingView()
+                    } else {
+                        ErrorView(errorMessage = "Album Not Found.")
+                    }
                 }
             }
 

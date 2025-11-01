@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,6 +62,7 @@ fun AlbumListView(
                     contentDescription = "album cover",
                     modifier = Modifier
                         .fillMaxWidth()
+                        .aspectRatio(1f)
                         .clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
                     contentScale = ContentScale.Crop
                 )
