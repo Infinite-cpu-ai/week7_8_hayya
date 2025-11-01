@@ -1,5 +1,7 @@
 package com.hanzelius.week7_8_hayya.ui.viewmodel
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hanzelius.week7_8_hayya.data.container.ArtistContainer
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import kotlin.math.ceil
 
 class ArtistViewModel(
     private val repository: ArtistRepository = ArtistContainer().artistRepository
@@ -36,6 +39,15 @@ class ArtistViewModel(
         return "%d:%02d".format(minutes, seconds)
     }
 
+    fun calculateGridHeight(albumCount: Int): Dp {
+        val column = 2
+        val heightPerCard = 220.dp
+        val spacing = 12.dp
+        val row = ceil(albumCount / column.toFloat()).toInt()
+        val totalHeight: Dp = (heightPerCard * row) + (spacing * (row - 1))
+        return totalHeight
+    }
+
     fun getArtist(artistName: String) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -51,12 +63,14 @@ class ArtistViewModel(
                             errorMessage = "Tidak ada koneksi internet."
                         )
                     }
+
                     is HttpException -> {
                         _artist.value = Artist(
                             isError = true,
                             errorMessage = "Error: ${e.message()}"
                         )
                     }
+
                     else -> {
                         _artist.value = Artist(
                             isError = true,
@@ -103,6 +117,7 @@ class ArtistViewModel(
                         isError = true,
                         errorMessage = "Tidak ada koneksi internet."
                     )
+
                     is HttpException -> Track(
                         trackId = 0,
                         trackName = "",
@@ -110,6 +125,7 @@ class ArtistViewModel(
                         isError = true,
                         errorMessage = e.message ?: "Gagal memuat lagu."
                     )
+
                     else -> Track(
                         trackId = 0,
                         trackName = "",

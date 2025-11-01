@@ -13,8 +13,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingView(modifier: Modifier = Modifier) {
-    Column (
-        modifier = modifier.fillMaxSize()
+    Column(
+        modifier = modifier
+            .fillMaxSize()
             .background(Color(0xFF282828)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

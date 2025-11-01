@@ -59,9 +59,7 @@ fun TrackCard(
                         fontWeight = FontWeight.Bold
                     )
                 }
-
                 Spacer(modifier = Modifier.width(12.dp))
-
                 Text(
                     text = track.trackName,
                     color = Color(0xFFA6A07A),
@@ -69,7 +67,6 @@ fun TrackCard(
                     modifier = Modifier.weight(1f),
                     maxLines = 1
                 )
-
                 Text(
                     text = viewModel.formatTrackDuration(track.trackDuration),
                     color = Color(0xFFA6A07A),

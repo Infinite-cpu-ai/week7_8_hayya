@@ -31,8 +31,8 @@ fun ErrorView(
     ){
         Text(
             text = errorMessage,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Normal,
             color = Color.Red,
             textAlign = TextAlign.Center
         )

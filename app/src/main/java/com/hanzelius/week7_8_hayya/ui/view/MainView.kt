@@ -50,17 +50,10 @@ fun MainView(
         isLoading -> LoadingView()
         artistDisplayed.isError -> ErrorView(
             errorMessage = artistDisplayed.errorMessage ?: "Terjadi kesalahan tak terduga.",
-            onRetry = { artistViewModel.getArtist(artistName = "Coldplay")}
+            onRetry = { artistViewModel.getArtist(artistName = "Coldplay") }
         )
 
         else -> {
-            val albumCount = albumDisplayed.size
-            val column = 2
-            val heightPerCard = 220.dp
-            val spacing = 12.dp
-            val row = ceil(albumCount / column.toFloat()).toInt()
-            val totalHeight: Dp = (heightPerCard * row) + (spacing * (row - 1))
-
             LazyColumn(
                 modifier = modifier
                     .fillMaxSize()
@@ -73,7 +66,7 @@ fun MainView(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Box{
+                        Box {
                             Image(
                                 painter = rememberAsyncImagePainter(artistDisplayed.artistThumb),
                                 contentDescription = "Artist Thumbnail",
@@ -86,10 +79,11 @@ fun MainView(
                                     )
                                     .size(350.dp)
                             )
-                            Column (
-                                modifier = modifier.align(Alignment.BottomStart)
+                            Column(
+                                modifier = modifier
+                                    .align(Alignment.BottomStart)
                                     .padding(15.dp)
-                            ){
+                            ) {
                                 Text(
                                     text = artistDisplayed.artistName,
                                     fontSize = 20.sp,
@@ -103,11 +97,11 @@ fun MainView(
                             }
                         }
                     }
-                    Column (
+                    Column(
                         modifier = modifier
                             .padding(horizontal = 20.dp),
                         verticalArrangement = Arrangement.Center
-                    ){
+                    ) {
                         Text(
                             text = "Albums",
                             color = Color(0xFFC3BCA8)
@@ -118,7 +112,11 @@ fun MainView(
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             userScrollEnabled = false,
-                            modifier = modifier.height(totalHeight)
+                            modifier = modifier.height(
+                                artistViewModel.calculateGridHeight(
+                                    albumDisplayed.size
+                                )
+                            )
                         ) {
                             items(albumDisplayed) { album ->
                                 AlbumCard(
