@@ -3,6 +3,8 @@ package com.hanzelius.week7_8_hayya.ui.route
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -18,6 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import com.hanzelius.week7_8_hayya.ui.view.AlbumListView
 import com.hanzelius.week7_8_hayya.ui.view.ErrorView
 import com.hanzelius.week7_8_hayya.ui.view.LoadingView
@@ -33,9 +37,6 @@ enum class ArtistScreen(
     Loading(title = "Loading"),
     Error(title = "Error")
 }
-
-private fun albumRoute(albumId: Int) = "${ArtistScreen.AlbumList.name}/$albumId"
-
 @Composable
 fun ArtistAppRoute() {
     val viewModel: ArtistViewModel = viewModel()
@@ -48,7 +49,8 @@ fun ArtistAppRoute() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    val currentView = ArtistScreen.entries.find { it.name == currentDestination?.route}
+    val currentRouteName = currentDestination?.route?.substringBefore("/")
+    val currentView = ArtistScreen.entries.find { it.name == currentRouteName }
 
     Scaffold (
         topBar = {
@@ -76,7 +78,7 @@ fun ArtistAppRoute() {
                 val albumId = backStackEntry.arguments?.getString("albumId")?.toIntOrNull()
 
                 if (albumId == null) {
-                    ErrorView(errorMessage = "Invalid album id.")
+                    ErrorView(errorMessage = "Album Invalid.")
                     return@composable
                 }
 
@@ -92,7 +94,7 @@ fun ArtistAppRoute() {
                     if (isLoading) {
                         LoadingView()
                     } else {
-                        ErrorView(errorMessage = "Album Not Found.")
+                        ErrorView(errorMessage = "Album Tidak Ditemukan.")
                     }
                 }
             }
@@ -107,7 +109,6 @@ fun ArtistAppRoute() {
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,12 +125,12 @@ fun MyTopAppBar(
     CenterAlignedTopAppBar(
         title = {
             Text(
-                if (isLoading)
-                    "Loading..."
-                else if (artist.isError)
-                    "Error"
-                else
-                    artist.artistName
+                when {
+                    isLoading -> "Loading..."
+                    artist.isError -> "Error"
+                    currentView != null -> currentView.title
+                    else -> artist.artistName
+                }
             )
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

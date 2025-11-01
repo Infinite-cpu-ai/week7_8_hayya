@@ -1,6 +1,7 @@
 package com.hanzelius.week7_8_hayya.ui.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Button
@@ -22,36 +23,32 @@ fun ErrorView(
     errorMessage: String = "Tidak ada koneksi internet.",
     onRetry: () -> Unit = {}
 ) {
-    Column (
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF282828)),
+            .background(Color(0xFF282828))
+            .clickable(enabled = onRetry != null) { onRetry?.invoke() },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    ){
+    ) {
         Text(
-            text = errorMessage,
+            text = "Error $errorMessage",
             fontSize = 18.sp,
             fontWeight = FontWeight.Normal,
             color = Color.Red,
             textAlign = TextAlign.Center
         )
-        if (onRetry != null){
-            Button(
-                onClick = onRetry,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFA6A07A),
-                    contentColor = Color.Black
-                )
-            ) {
-                Text(
-                    text = "Coba Lagi",
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
+        Text(
+            text = "Ketuk untuk mencoba lagi.",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            color = Color(0xFFC3BCA8),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp)
+        )
     }
 }
+
 @Preview
 @Composable
 fun ErrorViewPreview() {
