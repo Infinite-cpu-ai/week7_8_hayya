@@ -8,155 +8,85 @@ import com.hanzelius.week7_8_hayya.ui.model.Track
 class ArtistRepository(private val service: ArtistService) {
 
     suspend fun getArtist(artistName: String): Artist {
-        return try {
-            val response = service.searchArtist(artistName = artistName)
-            if (!response.isSuccessful) {
-                return Artist(
-                    artistId = 0,
-                    artistName = "",
-                    artistGenre = "",
-                    artistThumb = "",
-                    artistBiography = "",
-                    isError = true,
-                    errorMessage = "HTTP ${response.code()}: ${response.message()}"
-                )
-            }
-
-            val body = response.body()
-            val artistData = body?.artists?.firstOrNull()
-            if (artistData == null) {
-                return Artist(
-                    artistId = 0,
-                    artistName = "",
-                    artistGenre = "",
-                    artistThumb = "",
-                    artistBiography = "",
-                    isError = true,
-                    errorMessage = "Artist not found"
-                )
-            }
-
-            Artist(
-                artistId = artistData.idArtist.toInt(),
-                artistName = artistData.strArtist,
-                artistGenre = artistData.strGenre,
-                artistThumb = artistData.strArtistThumb,
-                artistBiography = artistData.strBiographyEN,
-                isError = false,
-                errorMessage = ""
-            )
-        } catch (e: Exception) {
-            Artist(
+        val response = service.searchArtist(artistName = artistName)
+        if (!response.isSuccessful) {
+            return Artist(
                 artistId = 0,
                 artistName = "",
                 artistGenre = "",
                 artistThumb = "",
                 artistBiography = "",
                 isError = true,
-                errorMessage = e.localizedMessage ?: "Unknown error"
+                errorMessage = "HTTP ${response.code()}: ${response.message()}"
             )
         }
-    }
 
-    suspend fun getAlbum(artistName: String): Album {
-        return try {
-            val response = service.searchAlbum(artistName = artistName)
-            if (!response.isSuccessful) {
-                return Album(
-                    albumId = 0,
-                    albumName = "",
-                    albumThumb = "",
-                    albumYear = "",
-                    albumGenre = "",
-                    albumDescription = "",
-                    artistId = 0,
-                    isError = true,
-                    errorMessage = "HTTP ${response.code()}: ${response.message()}"
-                )
-            }
-
-            val body = response.body()
-            val albumData = body?.album?.firstOrNull()
-            if (albumData == null) {
-                return Album(
-                    albumId = 0,
-                    albumName = "",
-                    albumThumb = "",
-                    albumYear = "",
-                    albumGenre = "",
-                    albumDescription = "",
-                    artistId = 0,
-                    isError = true,
-                    errorMessage = "Album not found"
-                )
-            }
-
-            Album(
-                albumId = albumData.idAlbum.toInt(),
-                albumName = albumData.strAlbum,
-                albumThumb = albumData.strAlbumThumb,
-                albumYear = albumData.intYearReleased,
-                albumGenre = albumData.strGenre,
-                albumDescription = albumData.strDescriptionEN,
-                artistId = albumData.idArtist.toInt(),
-                isError = false,
-                errorMessage = ""
-            )
-        } catch (e: Exception) {
-            Album(
-                albumId = 0,
-                albumName = "",
-                albumThumb = "",
-                albumYear = "",
-                albumGenre = "",
-                albumDescription = "",
+        val body = response.body()
+        val artistData = body?.artists?.firstOrNull()
+        if (artistData == null) {
+            return Artist(
                 artistId = 0,
+                artistName = "",
+                artistGenre = "",
+                artistThumb = "",
+                artistBiography = "",
                 isError = true,
-                errorMessage = e.localizedMessage ?: "Unknown error"
+                errorMessage = "Artist not found"
             )
         }
+
+        return Artist(
+            artistId = artistData.idArtist.toInt(),
+            artistName = artistData.strArtist,
+            artistGenre = artistData.strGenre,
+            artistThumb = artistData.strArtistThumb,
+            artistBiography = artistData.strBiographyEN,
+            isError = false,
+            errorMessage = ""
+        )
     }
 
-    suspend fun getTrack(albumId: Int): Track {
-        return try {
-            val response = service.albumTracks(albumId = albumId)
-            if (!response.isSuccessful) {
-                return Track(
-                    trackId = 0,
-                    trackName = "",
-                    trackDuration = 0,
-                    isError = true,
-                    errorMessage = "HTTP ${response.code()}: ${response.message()}"
-                )
-            }
+    suspend fun getAlbum(artistName: String): List<Album> {
+        val response = service.searchAlbum(artistName = artistName)
+        if (!response.isSuccessful) {
+            return emptyList()
+        }
 
-            val body = response.body()
-            val trackData = body?.track?.firstOrNull()
-            if (trackData == null) {
-                return Track(
-                    trackId = 0,
-                    trackName = "",
-                    trackDuration = 0,
-                    isError = true,
-                    errorMessage = "Track not found"
-                )
-            }
-
-            Track(
-                trackId = trackData.idTrack.toInt(),
-                trackName = trackData.strTrack,
-                trackDuration = trackData.intDuration.toInt(),
+        val body = response.body()
+        val albums = body?.album?.map { albumData ->
+            Album(
+                albumId = albumData.idAlbum.toIntOrNull() ?: 0,
+                albumName = albumData.strAlbum ?: "",
+                albumThumb = albumData.strAlbumThumb ?: "",
+                albumYear = albumData.intYearReleased ?: "",
+                albumGenre = albumData.strGenre ?: "",
+                albumDescription = albumData.strDescriptionEN ?: "",
+                artistId = albumData.idArtist.toIntOrNull() ?: 0,
                 isError = false,
                 errorMessage = ""
             )
-        } catch (e: Exception) {
-            Track(
-                trackId = 0,
-                trackName = "",
-                trackDuration = 0,
-                isError = true,
-                errorMessage = e.localizedMessage ?: "Unknown error"
-            )
+        } ?: emptyList()
+
+        return albums
+    }
+
+    suspend fun getTrack(albumId: Int): List<Track> {
+        val response = service.albumTracks(albumId = albumId)
+        if (!response.isSuccessful) {
+            return emptyList()
         }
+
+        val body = response.body()
+        val tracks = body?.track?.map { trackData ->
+            Track(
+                trackId = trackData.idTrack.toIntOrNull() ?: 0,
+                trackName = trackData.strTrack ?: "",
+                trackDuration = (trackData.intDuration?.toIntOrNull() ?: 0),
+                isError = false,
+                errorMessage = ""
+            )
+        } ?: emptyList()
+
+        return tracks
     }
 }

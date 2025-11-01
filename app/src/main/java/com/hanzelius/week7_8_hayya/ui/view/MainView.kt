@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -42,14 +43,14 @@ fun MainView(
     val isLoading by artistViewModel.isLoading.collectAsState()
 
     LaunchedEffect(Unit) {
-        artistViewModel.getArtist("John Mayer")
+        artistViewModel.getArtist("Coldplay")
     }
 
     when {
         isLoading -> LoadingView()
         artistDisplayed.isError -> ErrorView(
             errorMessage = artistDisplayed.errorMessage ?: "Terjadi kesalahan tak terduga.",
-            onRetry = { artistViewModel.getArtist(artistName = "John Mayer")}
+            onRetry = { artistViewModel.getArtist(artistName = "Coldplay")}
         )
 
         else -> {
@@ -85,7 +86,10 @@ fun MainView(
                                     )
                                     .size(350.dp)
                             )
-                            Column {
+                            Column (
+                                modifier = modifier.align(Alignment.BottomStart)
+                                    .padding(15.dp)
+                            ){
                                 Text(
                                     text = artistDisplayed.artistName,
                                     fontSize = 20.sp,
@@ -101,19 +105,20 @@ fun MainView(
                     }
                     Column (
                         modifier = modifier
-                            .padding(horizontal = 12.dp),
+                            .padding(horizontal = 20.dp),
                         verticalArrangement = Arrangement.Center
                     ){
                         Text(
-                            text = "Album",
+                            text = "Albums",
                             color = Color(0xFFC3BCA8)
                         )
+                        Spacer(modifier = modifier.height(15.dp))
                         LazyVerticalGrid(
-                            modifier = modifier.height(totalHeight),
                             columns = GridCells.Fixed(2),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
-                            userScrollEnabled = false
+                            userScrollEnabled = false,
+                            modifier = modifier.height(totalHeight)
                         ) {
                             items(albumDisplayed) { album ->
                                 AlbumCard(

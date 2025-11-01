@@ -3,6 +3,7 @@ package com.hanzelius.week7_8_hayya.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hanzelius.week7_8_hayya.data.container.ArtistContainer
+import com.hanzelius.week7_8_hayya.data.repository.ArtistRepository
 import com.hanzelius.week7_8_hayya.ui.model.Album
 import com.hanzelius.week7_8_hayya.ui.model.Artist
 import com.hanzelius.week7_8_hayya.ui.model.Track
@@ -12,7 +13,9 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class ArtistViewModel() : ViewModel() {
+class ArtistViewModel(
+    private val repository: ArtistRepository = ArtistContainer().artistRepository
+) : ViewModel() {
 
     private val _artist = MutableStateFlow(Artist())
     val artist: StateFlow<Artist> = _artist
@@ -33,11 +36,11 @@ class ArtistViewModel() : ViewModel() {
         return "%d:%02d".format(minutes, seconds)
     }
 
-    fun getArtist(artistName : String) {
+    fun getArtist(artistName: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val artistResponse = ArtistContainer().artistRepository.getArtist(artistName)
+                val artistResponse = repository.getArtist(artistName)
                 _artist.value = artistResponse
                 getAlbum(artistName)
             } catch (e: IOException) {
@@ -60,8 +63,8 @@ class ArtistViewModel() : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val albumResponse = ArtistContainer().artistRepository.getAlbum(artistName)
-                _album.value = listOf(albumResponse)
+                val albumResponse: List<Album> = repository.getAlbum(artistName)
+                _album.value = albumResponse
             } catch (e: IOException) {
                 _album.value = emptyList()
             } catch (e: HttpException) {
@@ -71,19 +74,20 @@ class ArtistViewModel() : ViewModel() {
             }
         }
     }
+
     fun getTrack(albumId: Int) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val trackResponse = ArtistContainer().artistRepository.getTrack(albumId)
-                _track.value = listOf(trackResponse)
+                val trackResponse: List<Track> = repository.getTrack(albumId)
+                _track.value = trackResponse
             } catch (e: IOException) {
                 _track.value = listOf(
-                    Track(isError = true, errorMessage = "Tidak ada koneksi internet.")
+                    Track(trackId = 0, trackName = "", trackDuration = 0, isError = true, errorMessage = "Tidak ada koneksi internet.")
                 )
             } catch (e: HttpException) {
                 _track.value = listOf(
-                    Track(isError = true, errorMessage = e.message ?: "Gagal memuat lagu.")
+                    Track(trackId = 0, trackName = "", trackDuration = 0, isError = true, errorMessage = e.message ?: "Gagal memuat lagu.")
                 )
             } finally {
                 _isLoading.value = false

@@ -3,6 +3,7 @@ package com.hanzelius.week7_8_hayya.ui.view
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,8 +31,6 @@ fun AlbumCard(
 ) {
     Card(
         modifier = modifier
-            .height(200.dp)
-            .width(200.dp)
             .clickable(onClick = onClick)
             .border(width = 0.2.dp, color = Color(0xFFA6A07A), shape = RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(15.dp),
@@ -40,18 +39,18 @@ fun AlbumCard(
         )
     ) {
         Column(
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
                 model = album.albumThumb,
                 contentDescription = "album thumbnail",
                 modifier = Modifier.height(145.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .size(160.dp),
+                    .fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
             Column (
-                modifier = modifier.padding(vertical = 12.dp)
+                modifier = modifier.padding(horizontal = 12.dp)
                     .padding(top = 12.dp)
             ){
                 Text(

@@ -53,14 +53,15 @@ fun AlbumListView(
                 containerColor = Color(0xFF2B2B2B)
             )
         ){
-            Column {
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
                 AsyncImage(
                     model = albumDisplayed.albumThumb,
                     contentDescription = "album cover",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp))
-                        .height(250.dp),
+                        .clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
                     contentScale = ContentScale.Crop
                 )
                 Spacer(modifier.height(10.dp))
@@ -72,12 +73,12 @@ fun AlbumListView(
                     Text(
                         text = albumDisplayed.albumName,
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Normal,
                         color = Color(0xFFC3BCA8),
                         modifier = modifier.padding(bottom = 5.dp)
                     )
                     Text(
-                        text = "by ${albumDisplayed.albumYear} • ${albumDisplayed.albumGenre}",
+                        text = "${albumDisplayed.albumYear} • ${albumDisplayed.albumGenre}",
                         fontSize = 14.sp,
                         color = Color(0xFFC3BCA8),
                         modifier = modifier.padding(bottom = 8.dp)
@@ -85,7 +86,8 @@ fun AlbumListView(
                     Text(
                         text = albumDisplayed.albumDescription,
                         fontSize = 14.sp,
-                        color = Color(0xFFC3BCA8)
+                        color = Color(0xFFC3BCA8),
+                        maxLines = 7
                     )
                 }
             }
@@ -100,53 +102,7 @@ fun AlbumListView(
         Spacer(modifier = modifier.height(15.dp))
 
         tracksDisplayed.forEachIndexed { index, track ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFFA6A07A)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "${index + 1}",
-                        color = Color(0xFF282828),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Spacer(modifier = modifier.width(12.dp))
-
-                Text(
-                    text = track.trackName,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    modifier = Modifier.weight(1f)
-                )
-//
-//                val durationInt = track.trackDuration
-//                val secondsTotal = if (durationInt > 1000) durationInt / 1000 else durationInt
-//                val minutes = secondsTotal / 60
-//                val seconds = secondsTotal % 60
-//                val formattedDuration = "%d:%02d".format(minutes, seconds)
-
-                Text(
-                    text = viewModel.formatTrackDuration(track.trackDuration),
-                    color = Color(0xFFA6A07A),
-                    fontSize = 14.sp
-                )
-            }
-
-            Divider(
-                color = Color(0xFF3A3A3A),
-                thickness = 1.dp
-            )
+            TrackCard(index = index, track = track, viewModel = viewModel)
         }
     }
 }
