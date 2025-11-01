@@ -2,11 +2,11 @@ package com.hanzelius.week7_8_hayya.ui.model
 
 data class Album(
     val albumId: Int = 0,
-    val albumName: String? = null,
-    val albumYear: String? = null,
-    val albumGenre: String? = null,
-    val albumThumb: String? = null,
-    val albumDescription: String? = null,
+    val albumName: String = "",
+    val albumYear: String = "",
+    val albumGenre: String = "",
+    val albumThumb: String = "",
+    val albumDescription: String = "",
 
     val artistId: Int = 0, // Foreign key
 

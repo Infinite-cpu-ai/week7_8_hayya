@@ -1,55 +1,135 @@
 package com.hanzelius.week7_8_hayya.ui.view
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.hanzelius.week7_8_hayya.model.Artist
+import com.hanzelius.week7_8_hayya.ui.route.ArtistScreen
 import com.hanzelius.week7_8_hayya.ui.viewmodel.ArtistUiState
+import com.hanzelius.week7_8_hayya.ui.viewmodel.ArtistViewModel
+import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainView(
-    artistUiState: ArtistUiState,
-    retryAction: () -> Unit,
-    onArtistClick: (Artist) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    artistViewModel: ArtistViewModel = viewModel(),
+    navController: NavController = rememberNavController()
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Artist Explorer") })
-        }
-    ) { padding ->
-        when (artistUiState) {
-            is ArtistUiState.Loading -> LoadingView()
-            is ArtistUiState.Success -> ArtistListView(
-                artists = artistUiState.artists,
-                onArtistClick = onArtistClick,
-                modifier = Modifier.padding(padding)
-            )
-            is ArtistUiState.Error -> ErrorView(retryAction = retryAction)
-        }
-    }
-}
+    val artistDisplayed by artistViewModel.artist.collectAsState()
+    val albumDisplayed by artistViewModel.album.collectAsState()
 
-@Composable
-fun ArtistListView(
-    artists: List<Artist>,
-    onArtistClick: (Artist) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier
-    ) {
-        items(artists) { artist ->
-            ArtistCard(artist = artist, onClick = { onArtistClick(artist) })
+    val isLoading by artistViewModel.isLoading.collectAsState()
+
+    LaunchedEffect(Unit) {
+        artistViewModel.getArtist("John Mayer")
+    }
+
+    when {
+        isLoading -> LoadingView()
+        artistDisplayed.isError -> ErrorView(
+            errorMessage = artistDisplayed.errorMessage ?: "Terjadi kesalahan tak terduga."
+            onRetry = { artistViewModel.getArtist("John Mayer") }
+        )
+
+        else -> {
+            val albumCount = albumDisplayed.size
+            val column = 2
+            val heightPerCard = 220.dp
+            val spacing = 12.dp
+            val row = ceil(albumCount / column.toFloat()).toInt()
+            val totalHeight: Dp = (heightPerCard * row) + (spacing * (row - 1))
+
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF282828))
+            ) {
+                item {
+                    Row(
+                        modifier = modifier
+                            .padding(top = 8.dp, bottom = 12.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Box{
+                            Image(
+                                painter = rememberAsyncImagePainter(artistDisplayed.artistThumb),
+                                contentDescription = "Artist Thumbnail",
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(15.dp))
+                                    .border(
+                                        width = 2.dp,
+                                        color = Color(0xFF3C3C3C),
+                                        RoundedCornerShape(15.dp)
+                                    )
+                                    .size(350.dp)
+                            )
+                            Column {
+                                Text(
+                                    text = artistDisplayed.artistName,
+                                    fontSize = 20.sp,
+                                    color = Color(0xFFC3BCA8)
+                                )
+                                Text(
+                                    text = artistDisplayed.artistGenre,
+                                    color = Color(0xFFC3BCA8),
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+                    Column (
+                        modifier = modifier
+                            .padding(horizontal = 12.dp),
+                        verticalArrangement = Arrangement.Center
+                    ){
+                        Text(
+                            text = "Album",
+                            color = Color(0xFFC3BCA8)
+                        )
+                        LazyVerticalGrid(
+                            modifier = modifier.height(totalHeight),
+                            columns = GridCells.Fixed(2),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            userScrollEnabled = false
+                        ) {
+                            items(albumDisplayed) { album ->
+                                AlbumCard(
+                                    album = album,
+                                    modifier = modifier,
+                                    onClick = {
+                                        navController.navigate("${ArtistScreen.AlbumList.name}/${album.albumId}")
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
