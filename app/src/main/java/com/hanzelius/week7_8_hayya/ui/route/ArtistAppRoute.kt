@@ -1,6 +1,8 @@
 package com.hanzelius.week7_8_hayya.ui.route
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,14 +16,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import com.hanzelius.week7_8_hayya.ui.view.AlbumListView
 import com.hanzelius.week7_8_hayya.ui.view.ErrorView
 import com.hanzelius.week7_8_hayya.ui.view.LoadingView
@@ -30,13 +29,13 @@ import com.hanzelius.week7_8_hayya.ui.viewmodel.ArtistViewModel
 
 enum class ArtistScreen(
     val title: String,
-    val icon: ImageVector? = null
 ) {
     Main(title = "Home"),
     AlbumList(title = "Album Detail"),
     Loading(title = "Loading"),
     Error(title = "Error")
 }
+
 @Composable
 fun ArtistAppRoute() {
     val viewModel: ArtistViewModel = viewModel()
@@ -52,7 +51,7 @@ fun ArtistAppRoute() {
     val currentRouteName = currentDestination?.route?.substringBefore("/")
     val currentView = ArtistScreen.entries.find { it.name == currentRouteName }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             MyTopAppBar(
                 currentView = currentView,
@@ -89,7 +88,11 @@ fun ArtistAppRoute() {
                 }
 
                 if (selectedAlbum != null) {
-                    AlbumListView(albumDisplayed = selectedAlbum, tracksDisplayed = tracks, viewModel = viewModel)
+                    AlbumListView(
+                        albumDisplayed = selectedAlbum,
+                        tracksDisplayed = tracks,
+                        viewModel = viewModel
+                    )
                 } else {
                     if (isLoading) {
                         LoadingView()
@@ -120,16 +123,22 @@ fun MyTopAppBar(
     viewModel: ArtistViewModel
 ) {
     val artist by viewModel.artist.collectAsState()
+    val selectedName by viewModel.selectedAlbumName.collectAsState(initial = null)
     val isLoading by viewModel.isLoading.collectAsState()
+
+    val artistName = artist?.artistName ?: "Artist"
+    val artistIsError = artist?.isError == true
 
     CenterAlignedTopAppBar(
         title = {
             Text(
                 when {
                     isLoading -> "Loading..."
-                    artist.isError -> "Error"
+                    artistIsError -> "Error"
+                    currentView == ArtistScreen.Main -> artistName
+                    currentView == ArtistScreen.AlbumList -> selectedName ?: artistName
                     currentView != null -> currentView.title
-                    else -> artist.artistName
+                    else -> artistName
                 }
             )
         },

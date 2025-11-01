@@ -11,6 +11,7 @@ import com.hanzelius.week7_8_hayya.ui.model.Artist
 import com.hanzelius.week7_8_hayya.ui.model.Track
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -32,6 +33,12 @@ class ArtistViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _selectedAlbumName = MutableStateFlow<String?>(null)
+    val selectedAlbumName: StateFlow<String?> = _selectedAlbumName.asStateFlow()
+
+    fun selectAlbumByName(name: String) {
+        _selectedAlbumName.value = name
+    }
     fun formatTrackDuration(durationInt: Int): String {
         val secondsTotal = if (durationInt > 1000) durationInt / 1000 else durationInt
         val minutes = secondsTotal / 60

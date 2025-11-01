@@ -121,6 +121,7 @@ fun MainView(
                                     album = album,
                                     modifier = modifier,
                                     onClick = {
+                                        artistViewModel.selectAlbumByName(album.albumName)
                                         navController.navigate("${ArtistScreen.AlbumList.name}/${album.albumId}")
                                     }
                                 )
