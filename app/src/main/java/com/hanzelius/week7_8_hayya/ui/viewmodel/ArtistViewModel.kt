@@ -26,6 +26,13 @@ class ArtistViewModel() : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    fun formatTrackDuration(durationInt: Int): String {
+        val secondsTotal = if (durationInt > 1000) durationInt / 1000 else durationInt
+        val minutes = secondsTotal / 60
+        val seconds = secondsTotal % 60
+        return "%d:%02d".format(minutes, seconds)
+    }
+
     fun getArtist(artistName : String) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -36,7 +43,7 @@ class ArtistViewModel() : ViewModel() {
             } catch (e: IOException) {
                 _artist.value = Artist(
                     isError = true,
-                    errorMessage = "No internet connection"
+                    errorMessage = "Tidak ada koneksi internet."
                 )
             } catch (e: HttpException) {
                 _artist.value = Artist(
@@ -71,9 +78,13 @@ class ArtistViewModel() : ViewModel() {
                 val trackResponse = ArtistContainer().artistRepository.getTrack(albumId)
                 _track.value = listOf(trackResponse)
             } catch (e: IOException) {
-                _track.value = emptyList()
+                _track.value = listOf(
+                    Track(isError = true, errorMessage = "Tidak ada koneksi internet.")
+                )
             } catch (e: HttpException) {
-                _track.value = emptyList()
+                _track.value = listOf(
+                    Track(isError = true, errorMessage = e.message ?: "Gagal memuat lagu.")
+                )
             } finally {
                 _isLoading.value = false
             }

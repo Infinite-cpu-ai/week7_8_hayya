@@ -1,5 +1,6 @@
 package com.hanzelius.week7_8_hayya.ui.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +14,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LoadingView(modifier: Modifier = Modifier) {
     Column (
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
+            .background(Color(0xFF282828)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

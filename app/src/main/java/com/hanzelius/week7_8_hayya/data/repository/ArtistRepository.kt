@@ -13,8 +13,8 @@ class ArtistRepository(private val service: ArtistService) {
         val artists = service.searchArtist(
             artistName = artistName
         )
-        val body = artists.body()
-        val artistData = body?.artists?.firstOrNull()!!
+        val body = artists.body()!!
+        val artistData = body.artists.firstOrNull()!!
 
         return Artist(
             artistId = artistData.idArtist.toInt(),
@@ -31,8 +31,8 @@ class ArtistRepository(private val service: ArtistService) {
         val albums = service.searchAlbum(
             artistName = artistName
         )
-        val body = albums.body()
-        val albumData = body?.album?.firstOrNull()!!
+        val body = albums.body()!!
+        val albumData = body.album.firstOrNull()!!
 
         return Album(
             albumId = albumData.idAlbum.toInt(),
@@ -51,8 +51,8 @@ class ArtistRepository(private val service: ArtistService) {
         val tracks = service.albumTracks(
             albumId = albumId
         )
-        val body = tracks.body()
-        val trackData = body?.track?.firstOrNull()!!
+        val body = tracks.body()!!
+        val trackData = body.track.firstOrNull()!!
 
         return Track(
             trackId = trackData.idTrack.toInt(),

@@ -76,7 +76,7 @@ fun ArtistAppRoute() {
                 }
 
                 if (selectedAlbum != null) {
-                    AlbumListView(albumDisplayed = selectedAlbum, tracksDisplayed = tracks)
+                    AlbumListView(albumDisplayed = selectedAlbum, tracksDisplayed = tracks, viewModel = viewModel)
                 } else {
                     ErrorView(errorMessage = "Album Not Found.")
                 }
