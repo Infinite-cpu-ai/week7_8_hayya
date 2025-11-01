@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ArtistContainer {
     companion object{
-        val BASE_URL = "https://www.theaudiodb.com"
+        val BASE_URL = "https://www.theaudiodb.com/"
     }
 
     private val retrofit = Retrofit.Builder()
