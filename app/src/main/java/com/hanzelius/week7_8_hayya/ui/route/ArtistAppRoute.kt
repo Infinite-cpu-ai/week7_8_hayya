@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,8 +41,7 @@ fun ArtistAppRoute() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    val currentRoute = currentDestination?.route
-    val currentView = ArtistScreen.entries.find { it.name == current }
+    val currentView = ArtistScreen.entries.find { it.name == currentDestination?.route}
 
     Scaffold (
         topBar = {
@@ -78,7 +76,7 @@ fun ArtistAppRoute() {
                 }
 
                 if (selectedAlbum != null) {
-                    AlbumListView(album = selectedAlbum, tracks = tracks)
+                    AlbumListView(albumDisplayed = selectedAlbum, tracksDisplayed = tracks)
                 } else {
                     ErrorView(errorMessage = "Album Not Found.")
                 }
