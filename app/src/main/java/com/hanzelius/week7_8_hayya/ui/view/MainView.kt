@@ -25,9 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
-import com.hanzelius.week7_8_hayya.model.Artist
 import com.hanzelius.week7_8_hayya.ui.route.ArtistScreen
-import com.hanzelius.week7_8_hayya.ui.viewmodel.ArtistUiState
 import com.hanzelius.week7_8_hayya.ui.viewmodel.ArtistViewModel
 import kotlin.math.ceil
 
@@ -50,8 +48,8 @@ fun MainView(
     when {
         isLoading -> LoadingView()
         artistDisplayed.isError -> ErrorView(
-            errorMessage = artistDisplayed.errorMessage ?: "Terjadi kesalahan tak terduga."
-            onRetry = { artistViewModel.getArtist("John Mayer") }
+            errorMessage = artistDisplayed.errorMessage ?: "Terjadi kesalahan tak terduga.",
+            onRetry = { artistViewModel.getArtist(artistName = "John Mayer")}
         )
 
         else -> {
