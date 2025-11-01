@@ -1,6 +1,7 @@
 package com.hanzelius.week7_8_hayya.ui.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -44,7 +45,12 @@ fun AlbumListView(
             Card(
                 modifier = modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(15.dp)),
+                    .border(
+                        width = 0.2.dp,
+                        color = Color(0xFFA6A07A),
+                        shape = RoundedCornerShape(15.dp)
+                    ),
+                shape = RoundedCornerShape(15.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFF2B2B2B)
                 )

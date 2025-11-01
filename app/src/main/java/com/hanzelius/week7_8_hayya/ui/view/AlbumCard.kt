@@ -36,7 +36,7 @@ fun AlbumCard(
             .border(
                 width = 0.2.dp,
                 color = Color(0xFFA6A07A),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(15.dp)
             ),
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
